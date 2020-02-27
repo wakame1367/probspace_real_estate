@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 from nyaggle.experiment import run_experiment
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
@@ -39,10 +40,8 @@ def built_year(df):
     df['年号'] = df['建築年'].str[:2]
     df['和暦年数'] = df['建築年'].str[2:].str.strip('年').fillna(
         0).astype(int)
-    df.loc[df['年号'] == '昭和', '建築年(西暦)'] = df[
-                                              '和暦年数'] + 1925
-    df.loc[df['年号'] == '平成', '建築年(西暦)'] = df[
-                                              '和暦年数'] + 1988
+    df.loc[df['年号'] == '昭和', '建築年'] = df['和暦年数'] + 1925
+    df.loc[df['年号'] == '平成', '建築年'] = df['和暦年数'] + 1988
     return df
 
 
@@ -83,6 +82,9 @@ def preprocess(df):
 
 
 def main():
+    with open("settings/colum_names.yml", "r", encoding="utf-8") as f:
+        rename_dict = yaml.load(f, Loader=yaml.Loader)
+
     submit = pd.read_csv("resources/submission.csv")
     train, test = load_dataset()
     target_col = "y"
@@ -99,21 +101,9 @@ def main():
     train.drop(columns=drop_cols, inplace=True)
     test.drop(columns=drop_cols, inplace=True)
 
-    rename_dict = {'種類': 'type', '地域': 'region', '市区町村コード': 'code',
-                   '地区名': 'region_name', '最寄駅：名称': 'nearest_station',
-                   '最寄駅：距離（分）': 'nearest_station_distance',
-                   '間取り': 'floor_plan', '面積（㎡）': 'area', '土地の形状': 'land_shape',
-                   '間口': 'frontage',
-                   '延床面積（㎡）': 'total_floor_area', '建物の構造': 'arch', '用途': 'use',
-                   '今後の利用目的': 'purpose', '前面道路：方位': 'front_road-bearing',
-                   '前面道路：種類': 'front_road-type',
-                   '前面道路：幅員（ｍ）': 'front_road-width', '都市計画': 'city_planning',
-                   '建ぺい率（％）': 'construction_rate',
-                   '容積率（％）': 'floor-area_ratio', '取引時点': 'trading_point',
-                   '改装': 'renovation', '取引の事情等': 'eg',
-                   '建築年(西暦)': 'build_year'}
     train = train.rename(columns=rename_dict)
     test = test.rename(columns=rename_dict)
+
     lightgbm_params = {
         'max_depth': 8
     }
