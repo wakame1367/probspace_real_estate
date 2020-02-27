@@ -94,15 +94,16 @@ def main():
     train = preprocess(train)
     test = preprocess(test)
     drop_cols = ["id", "都道府県名", "市区町村名", "年号", "和暦年数", "建築年"]
-    cat_cols = ["種類", "地域", "市区町村コード", "地区名", "最寄駅：名称", "間取り", "土地の形状",
-                "建物の構造", "用途", "今後の利用目的", "前面道路：方位", "前面道路：種類", "都市計画", "改装",
-                "取引の事情等", "取引時点"]
-    train, test = category_encode(train, test, cat_cols)
     train.drop(columns=drop_cols, inplace=True)
     test.drop(columns=drop_cols, inplace=True)
 
     train = train.rename(columns=rename_dict)
     test = test.rename(columns=rename_dict)
+    cat_cols = ['Type', 'Region', 'MunicipalityCode', 'DistrictName',
+                'NearestStation', 'FloorPlan', 'LandShape', 'Structure', 'Use',
+                'Purpose', 'Direction', 'Classification', 'CityPlanning',
+                'Renovation', 'Remarks', 'Period']
+    train, test = category_encode(train, test, cat_cols)
 
     lightgbm_params = {
         'max_depth': 8
