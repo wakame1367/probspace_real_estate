@@ -14,7 +14,7 @@
 容積率（％）: FloorAreaRatio
 市区町村コード: MunicipalityCode
 市区町村名: Municipality
-延床面積(平方メートル): TotalFloorArea
+延床面積（㎡）: TotalFloorArea
 建ぺい率（％）: CoverageRatio
 建物の構造: Structure
 建築年: BuildingYear
@@ -26,4 +26,4 @@
 都道府県名: Prefecture
 間取り: FloorPlan
 間口: Frontage
-面積（平方メートル）: Area
+面積（㎡）: Area
