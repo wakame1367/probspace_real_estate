@@ -3,12 +3,12 @@
 前面道路：方位: Direction
 前面道路：種類: Classification
 取引の事情等: Remarks
-取引の種類: Type
+種類: Type
 取引価格（平方メートル単価）: UnitPrice
 取引価格（総額）: TradePrice
 取引時点: Period
 土地の形状: LandShape
-地区: Region
+地域: Region
 地区名: DistrictName
 坪単価: PricePerUnit
 容積率（％）: FloorAreaRatio
