@@ -208,18 +208,18 @@ def main():
         "verbose": 5000
     }
 
-    # cab_result = run_experiment(catboost_params,
-    #                             X_train=train,
-    #                             y=target,
-    #                             X_test=test,
-    #                             eval_func=rmse,
-    #                             cv=kf,
-    #                             categorical_feature=cat_cols,
-    #                             fit_params=fit_params,
-    #                             algorithm_type='cat',
-    #                             logging_directory='resources/logs/'
-    #                                               'catboost/{time}',
-    #                             sample_submission=submit)
+    cab_result = run_experiment(catboost_params,
+                                X_train=train,
+                                y=target,
+                                X_test=test,
+                                eval_func=rmse,
+                                cv=kf,
+                                categorical_feature=cat_cols,
+                                fit_params=fit_params,
+                                algorithm_type='cat',
+                                logging_directory='resources/logs/'
+                                                  'catboost/{time}',
+                                sample_submission=submit)
 
 
 if __name__ == '__main__':
