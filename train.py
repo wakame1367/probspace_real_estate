@@ -127,14 +127,25 @@ def add_lat_and_long(train, test, land_price):
     return train, test
 
 
+def make_sample_submission(test, target_col):
+    test_copy = test.copy()
+    index_col = "id"
+    submit_path = Path("resources/submission.csv")
+    test_copy.loc[:, target_col] = 0
+    submit = test_copy[[index_col, target_col]]
+    if not submit_path.exists():
+        submit.to_csv(submit_path, index=False)
+    return submit
+
+
 def main():
     with open("settings/colum_names.yml", "r", encoding="utf-8") as f:
         rename_dict = yaml.load(f, Loader=yaml.Loader)
 
-    submit = pd.read_csv("resources/submission.csv")
     train, test = load_dataset()
 
     target_col = "y"
+    submit = make_sample_submission(test, target_col)
     target = train[target_col]
     target = target.map(np.log1p)
     train.drop(columns=[target_col], inplace=True)
@@ -173,15 +184,42 @@ def main():
 
     kf = KFold(n_splits=4)
 
-    run_experiment(lightgbm_params,
-                   X_train=train,
-                   y=target,
-                   X_test=test,
-                   eval_func=rmse,
-                   cv=kf,
-                   fit_params=fit_params,
-                   logging_directory='resources/logs/{time}',
-                   sample_submission=submit)
+    lgb_result = run_experiment(lightgbm_params,
+                                X_train=train,
+                                y=target,
+                                X_test=test,
+                                eval_func=rmse,
+                                cv=kf,
+                                fit_params=fit_params,
+                                logging_directory='resources/logs/'
+                                                  'lightgbm/{time}',
+                                sample_submission=submit)
+
+    catboost_params = {
+        'learning_rate': 0.01,
+        'max_depth': 8,
+        'bagging_temperature': 0.8,
+        'l2_leaf_reg': 45,
+        'od_type': 'Iter'
+    }
+
+    fit_params = {
+        "early_stopping_rounds": 100,
+        "verbose": 5000
+    }
+
+    # cab_result = run_experiment(catboost_params,
+    #                             X_train=train,
+    #                             y=target,
+    #                             X_test=test,
+    #                             eval_func=rmse,
+    #                             cv=kf,
+    #                             categorical_feature=cat_cols,
+    #                             fit_params=fit_params,
+    #                             algorithm_type='cat',
+    #                             logging_directory='resources/logs/'
+    #                                               'catboost/{time}',
+    #                             sample_submission=submit)
 
 
 if __name__ == '__main__':

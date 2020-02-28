@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 nyaggle = "*"
 lightgbm = "*"
+catboost = "*"
 
 [dev-packages]
 
