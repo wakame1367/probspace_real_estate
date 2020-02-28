@@ -4,11 +4,14 @@ import numpy as np
 import pandas as pd
 import yaml
 from nyaggle.experiment import run_experiment
+from nyaggle.hyper_parameters.lightgbm import parameters
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
 
 data_path = Path("resources")
+
+parameters
 
 
 def rmse(y_true, y_pred):
@@ -81,12 +84,25 @@ def preprocess(df):
     return df
 
 
+def add_landp(train, test):
+    land_price = pd.read_csv("resources/published_land_price.csv")
+    # 直近5年のみ対象
+    target_cols = ["Ｈ２７価格", "Ｈ２８価格", "Ｈ２９価格", "Ｈ３０価格", "Ｈ３１価格"]
+    land_price["landp_mean"] = land_price[target_cols].mean(axis=1)
+    landp_mean = land_price.groupby("市区町村名")["landp_mean"].mean().reset_index()
+    train["市区町村名"] = train["市区町村名"].replace(r"市|区|町|村|", "", regex=True)
+    test["市区町村名"] = test["市区町村名"].replace(r"市|区|町|村|", "", regex=True)
+    train = train.merge(landp_mean, on='市区町村名')
+    test = test.merge(landp_mean, on='市区町村名')
+    return train, test
+
 def main():
     with open("settings/colum_names.yml", "r", encoding="utf-8") as f:
         rename_dict = yaml.load(f, Loader=yaml.Loader)
 
     submit = pd.read_csv("resources/submission.csv")
     train, test = load_dataset()
+
     target_col = "y"
     target = train[target_col]
     target = target.map(np.log1p)
@@ -106,7 +122,22 @@ def main():
     train, test = category_encode(train, test, cat_cols)
 
     lightgbm_params = {
-        'max_depth': 8
+        "metric": "rmse",
+        "objective": 'regression',
+        "max_depth": 5,
+        "num_leaves": 24,
+        "learning_rate": 0.007,
+        "n_estimators": 30000,
+        "min_child_samples": 80,
+        "subsample": 0.8,
+        "colsample_bytree": 1,
+        "reg_alpha": 0,
+        "reg_lambda": 0,
+    }
+
+    fit_params = {
+        "early_stopping_rounds": 100,
+        "verbose": 5000
     }
 
     kf = KFold(n_splits=4)
@@ -117,6 +148,7 @@ def main():
                    X_test=test,
                    eval_func=rmse,
                    cv=kf,
+                   fit_params=fit_params,
                    logging_directory='resources/logs/{time}',
                    sample_submission=submit)
 
