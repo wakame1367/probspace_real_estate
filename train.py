@@ -86,24 +86,26 @@ def preprocess(df):
 
 def preprocess_land_price(train, test):
     land_price = pd.read_csv("resources/published_land_price.csv")
-    land_price = land_price.rename({"緯度": "latitude", "経度": "longitude"})
+    # land_price = land_price.rename({"緯度": "latitude", "経度": "longitude"})
     land_price = clean_land_price(land_price)
     train = clean_train_test(train)
     test = clean_train_test(test)
+    train, test = add_landp(train, test, land_price)
+    return train, test
 
 
 def clean_land_price(df):
     target_col = "市区町村名"
     # 東京府中 -> 府中
-    df = df[target_col].replace(r"^東京", "", regex=True)
+    df[target_col] = df[target_col].replace(r"^東京", "", regex=True)
     return df
 
 
 def clean_train_test(df):
     target_col = "市区町村名"
     # 西多摩郡日の出 -> 日の出
-    df = df[target_col].replace(r"^西多摩郡", "", regex=True)
-    df = df[target_col].map(lambda x: x.rstrip("市区町村"))
+    df[target_col] = df[target_col].replace(r"^西多摩郡", "", regex=True)
+    df[target_col] = df[target_col].map(lambda x: x.rstrip("市区町村"))
     return df
 
 
