@@ -51,6 +51,14 @@ def landshape(df):
     return df
 
 
+def series_split_colum(df, col_name):
+    split_df = df[col_name].str.get_dummies(sep="、")
+    col_names = ["{}_{}".format(col_name, idx) for idx in
+                 range(split_df.shape[1])]
+    split_df.columns = col_names
+    return df.join(split_df)
+
+
 def structure(df):
     col_name = "Structure"
     """
@@ -60,11 +68,7 @@ def structure(df):
     0           0   0      0    0   0    1
     1           0   0      0    0   1    0
     """
-    split_df = df[col_name].str.get_dummies(sep="、")
-    col_names = ["{}_{}".format(col_name, idx) for idx in
-                 range(split_df.shape[1])]
-    split_df.columns = col_names
-    return df.merge(split_df, on=df.index)
+    return series_split_colum(df, col_name)
 
 
 def remarks(df):
@@ -76,11 +80,7 @@ def remarks(df):
     0             0          0           0  ...
     1             0          0           0  ...
     """
-    split_df = df[col_name].str.get_dummies(sep="、")
-    col_names = ["{}_{}".format(col_name, idx) for idx in
-                 range(split_df.shape[1])]
-    split_df.columns = col_names
-    return df.merge(split_df, on=df.index)
+    return series_split_colum(df, col_name)
 
 
 def use(df):
@@ -95,8 +95,4 @@ def use(df):
     3         0    0   1    0   0     0   0   0    0
     4         0    1   1    0   0     0   0   1    0
     """
-    split_df = df[col_name].str.get_dummies(sep="、")
-    col_names = ["{}_{}".format(col_name, idx) for idx in
-                 range(split_df.shape[1])]
-    split_df.columns = col_names
-    return df.merge(split_df, on=df.index)
+    return series_split_colum(df, col_name)
