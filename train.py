@@ -66,17 +66,6 @@ def add_lat_and_long(train, test, land_price):
     return train, test
 
 
-def make_sample_submission(test, target_col):
-    test_copy = test.copy()
-    index_col = "id"
-    submit_path = Path("resources/submission.csv")
-    test_copy.loc[:, target_col] = 0
-    submit = test_copy[[index_col, target_col]]
-    if not submit_path.exists():
-        submit.to_csv(submit_path, index=False)
-    return submit
-
-
 def main():
     with open("settings/colum_names.yml", "r", encoding="utf-8") as f:
         rename_dict = yaml.load(f, Loader=yaml.Loader)
@@ -85,7 +74,7 @@ def main():
 
     target_col = "y"
     is_train = "is_train"
-    submit = make_sample_submission(test, target_col)
+
     target = train[target_col]
     target = target.map(np.log1p)
     train[is_train] = 1
