@@ -124,30 +124,20 @@ def main():
     logging_directory = "resources/logs/lightgbm/{time}"
     now = datetime.now().strftime('%Y%m%d_%H%M%S')
     logging_directory = logging_directory.format(time=now)
-    with Experiment(logging_directory=logging_directory) as exp:
-        lgb_result = run_experiment(lightgbm_params,
-                                    X_train=train,
-                                    y=target,
-                                    X_test=test,
-                                    eval_func=rmse,
-                                    cv=kf,
-                                    fit_params=fit_params,
-                                    # sample_submission=submit,
-                                    inherit_experiment=exp)
-        # lgb_result.oof_prediction
-        # lgb_result.test_prediction
-        lgb_result.submission_df[target_col] = lgb_result.submission_df[
-            target_col].map(np.expm1)
-        sub_path = Path(logging_directory) / "{}.csv".format(now)
-        lgb_result.submission_df.to_csv(sub_path, index=False)
-        over_all_score = rmse(np.expm1(target),
-                              np.expm1(lgb_result.oof_prediction))
-        # for fold_idx, (_, val_idx) in enumerate(kf.split(train, target)):
-        #     score = rmse(np.expm1(target[val_idx]),
-        #                  np.expm1(lgb_result.oof_prediction[val_idx]))
-        #     exp.log_metric('Fold_{}({})'.format(fold_idx, rmse.__name__),
-        #                    score)
-        exp.log_metric('Overall({})'.format(rmse.__name__), over_all_score)
+    lgb_result = run_experiment(lightgbm_params,
+                                X_train=train,
+                                y=target,
+                                X_test=test,
+                                eval_func=rmse,
+                                cv=kf,
+                                fit_params=fit_params,
+                                logging_directory=logging_directory)
+    # lgb_result.oof_prediction
+    # lgb_result.test_prediction
+    lgb_result.submission_df[target_col] = lgb_result.submission_df[
+        target_col].map(np.expm1)
+    sub_path = Path(logging_directory) / "{}.csv".format(now)
+    lgb_result.submission_df.to_csv(sub_path, index=False)
 
 
 if __name__ == '__main__':
