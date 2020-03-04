@@ -160,32 +160,6 @@ def main():
         #                    score)
         exp.log_metric('Overall({})'.format(rmse.__name__), over_all_score)
 
-    # catboost_params = {
-    #     'learning_rate': 0.01,
-    #     'max_depth': 8,
-    #     'bagging_temperature': 0.8,
-    #     'l2_leaf_reg': 45,
-    #     'od_type': 'Iter'
-    # }
-    #
-    # fit_params = {
-    #     "early_stopping_rounds": 100,
-    #     "verbose": 5000
-    # }
-    #
-    # cab_result = run_experiment(catboost_params,
-    #                             X_train=train,
-    #                             y=target,
-    #                             X_test=test,
-    #                             eval_func=rmse,
-    #                             cv=kf,
-    #                             categorical_feature=cat_cols,
-    #                             fit_params=fit_params,
-    #                             algorithm_type='cat',
-    #                             logging_directory='resources/logs/'
-    #                                               'catboost/{time}',
-    #                             sample_submission=submit)
-
 
 if __name__ == '__main__':
     main()
