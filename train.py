@@ -83,10 +83,10 @@ def main():
     _all = pd.concat([train, test], ignore_index=True)
     _all = _all.rename(columns=rename_dict)
     _all = preprocess(_all)
-    drop_cols = ["id", "Prefecture", "Municipality", "年号", "和暦年数"]
+    drop_cols = ["id", "Prefecture", "Municipality", "年号", "和暦年数", 'FloorPlan']
     one_hot_cols = ['Structure', 'Use', 'Remarks']
     cat_cols = ['Type', 'Region', 'MunicipalityCode', 'DistrictName',
-                'NearestStation', 'FloorPlan', 'LandShape', 'Purpose',
+                'NearestStation', 'LandShape', 'Purpose',
                 'Direction', 'Classification', 'CityPlanning', 'Renovation',
                 'Period']
     _all.drop(columns=drop_cols, inplace=True)

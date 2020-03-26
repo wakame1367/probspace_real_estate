@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 from generate_feature import (built_year, walk_time, area1, area2, maguchi,
-                              remarks, landshape, structure, use)
+                              remarks, landshape, structure, use, num_of_rooms, ldk)
 
 
 def category_encode(df, target_cols):
@@ -20,6 +20,8 @@ def preprocess(df):
     df = area1(df)
     df = area2(df)
     df = maguchi(df)
+    df = ldk(df)
+    df = num_of_rooms(df)
     # df = remarks(df)
     # df = landshape(df)
     # df = structure(df)

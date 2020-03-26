@@ -13,6 +13,39 @@ def built_year(df):
     return df
 
 
+def get_num_of_rooms(floor_plan):
+    try:
+        _num_of_rooms = int(floor_plan[0])
+    except ValueError:
+        # nan is other value
+        if floor_plan == '<NA>' or floor_plan == 'nan':
+            return 0
+        else:
+            return 1
+    return _num_of_rooms
+
+
+def ldk(df):
+    df['L'] = df['FloorPlan'].map(lambda x: 1 if 'Ｌ' in str(x) else 0)
+    df['D'] = df['FloorPlan'].map(lambda x: 1 if 'Ｄ' in str(x) else 0)
+    df['K'] = df['FloorPlan'].map(lambda x: 1 if 'Ｋ' in str(x) else 0)
+    df['S'] = df['FloorPlan'].map(lambda x: 1 if 'Ｓ' in str(x) else 0)
+    df['R'] = df['FloorPlan'].map(lambda x: 1 if 'Ｒ' in str(x) else 0)
+    df['Maisonette'] = df['FloorPlan'].map(
+        lambda x: 1 if 'メゾネット' in str(x) else 0)
+    df['OpenFloor'] = df['FloorPlan'].map(
+        lambda x: 1 if 'オープンフロア' in str(x) else 0)
+    df['Studio'] = df['FloorPlan'].map(lambda x: 1 if 'スタジオ' in str(x) else 0)
+
+    return df
+
+
+def num_of_rooms(df):
+    df['num_of_rooms'] = df['FloorPlan'].map(
+        lambda x: get_num_of_rooms(str(x)))
+    return df
+
+
 def walk_time(df):
     df['TimeToNearestStation'] = df['TimeToNearestStation'].replace('30分?60分',
                                                                     '45')
