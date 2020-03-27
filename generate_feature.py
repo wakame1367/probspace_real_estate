@@ -73,6 +73,21 @@ def area2(df):
     return df
 
 
+def area_div_total_floor_area(df):
+    df['area_div_total_floor_area'] = df['Area'] / df['TotalFloorArea']
+    return df
+
+
+def total_floor_area_div_area(df):
+    df['total_floor_area_div_area'] = df['TotalFloorArea'] / df['Area']
+    return df
+
+
+def total_floor_area_per_floor(df):
+    df['total_floor_area'] = df['Area'] / df['num_of_rooms']
+    return df
+
+
 def maguchi(df):
     df['Frontage'] = pd.to_numeric(df['Frontage'].replace('50.0m以上', 50.0))
     return df
